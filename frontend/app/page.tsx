@@ -32,19 +32,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex flex-col items-center p-6 selection:bg-cyan-500/30">
       
-      {/* Navbar / Header */}
-      <nav className="w-full max-w-6xl flex justify-between items-center py-6 mb-12">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-lg"></div>
-          <span className="text-xl font-bold tracking-tight">FinAnalyst Pro</span>
-        </div>
-        <div className="flex gap-6 text-sm font-medium text-gray-400">
-          <a href="#" className="hover:text-white transition-colors">Dashboard</a>
-          <a href="#" className="hover:text-white transition-colors">Portfolio</a>
-          <a href="#" className="hover:text-white transition-colors">History</a>
-        </div>
-      </nav>
-
       {/* Main Search Area */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 

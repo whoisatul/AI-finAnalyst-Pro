@@ -8,31 +8,38 @@ from langgraph.graph import StateGraph, END
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
 
-load_dotenv()
+# 1. Load Environment Variables
+# We explicitly look for the .env file in the current folder
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
-# 1. Configuration
 HF_TOKEN = os.getenv("HF_KEY") or os.getenv("HF_TOKEN")
 
-# We use Zephyr again, but this time via the Chat Interface
+# DEBUG CHECK: Print status to terminal
+if not HF_TOKEN:
+    print("❌ ERROR: HF_TOKEN is missing! Make sure .env is in the 'backend' folder.")
+else:
+    print(f"✅ Found HF_TOKEN: {HF_TOKEN[:4]}...****")
+
+# Configuration
 REPO_ID = "HuggingFaceH4/zephyr-7b-beta"
 
 # Initialize the LLM
 try:
-    # Step 1: Create the base endpoint
+    if not HF_TOKEN:
+        raise ValueError("No API Token found.")
+
     endpoint = HuggingFaceEndpoint(
         repo_id=REPO_ID,
-        task="text-generation", # We keep this for the base, but wrap it below
+        task="text-generation",
         max_new_tokens=512,
         do_sample=True,
         temperature=0.3,
         huggingfacehub_api_token=HF_TOKEN
     )
     
-    # Step 2: WRAP it in ChatHuggingFace
-    # This automatically formats requests as "Conversational" for the API
     llm = ChatHuggingFace(llm=endpoint)
-    
     print(f"✅ LangGraph Chat Agent initialized with {REPO_ID}")
+
 except Exception as e:
     print(f"❌ Failed to initialize Agent: {e}")
     llm = None
@@ -49,7 +56,6 @@ def analyst_node(state: AgentState):
     print(f"--- 🧠 Analyst Node: Processing {state['ticker']} ---")
     data = state['stock_data']
     
-    # Create a Structured Chat Message
     messages = [
         SystemMessage(content="You are a Senior Financial Analyst."),
         HumanMessage(content=f"""
@@ -65,12 +71,10 @@ def analyst_node(state: AgentState):
     ]
     
     try:
-        # Invoke with MESSAGES, not string
         response = llm.invoke(messages)
-        content = response.content # Extract text from AI Message
+        content = response.content
     except Exception as e:
         print(f"❌ ANALYST ERROR: {e}")
-        # traceback.print_exc()
         content = "Analysis unavailable due to API error."
     
     return {"draft_analysis": content}
