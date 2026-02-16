@@ -17,11 +17,14 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ticker }),
       });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
       const result = await res.json();
       setData(result);
     } catch (error) {
       console.error("Error:", error);
-      alert("Failed to fetch analysis. Make sure backend is running!");
+      alert("Connection failed. Is the Backend (Flask) running on port 5001?");
     }
     setLoading(false);
   };
