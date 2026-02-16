@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center mb-5" data-aos="fade-down">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 fw-bold mb-3">AI-Powered <span class="text-accent">Financial Intelligence</span></h1>
+        <p class="lead text-muted mb-4">Instant institutional-grade analysis for any stock ticker.</p>
+        
+        <div class="card card-glass p-4 border-0">
+            <div class="input-group input-group-lg">
+                <input type="text" id="tickerInput" class="form-control border-0 bg-light" placeholder="Enter Ticker (e.g. NVDA, AAPL)...">
+                <button class="btn btn-glow px-4 fw-bold" onclick="analyzeStock()">
+                  <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Analyze
+              </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-12">
+        <h4 class="mb-3 fw-bold"><i class="fa-solid fa-fire text-danger me-2"></i>Trending Stocks</h4>
+        <div class="card card-glass border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-uppercase small text-muted">
+                            <tr>
+                                <th class="ps-4">Ticker</th>
+                                <th>Company</th>
+                                <th>Price</th>
+                                <th>Change</th>
+                                <th>P/E Ratio</th>
+                                <th>Beta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stock in default_stocks %}
+                            <tr style="cursor: pointer;" onclick="document.getElementById('tickerInput').value='{{ stock.ticker }}'; analyzeStock();">
+                                <td class="ps-4 fw-bold text-primary">{{ stock.ticker }}</td>
+                                <td>{{ stock.company }}</td>
+                                <td class="fw-bold">${{ stock.price }}</td>
+                                <td>
+                                    <span class="badge rounded-pill {{ 'bg-success' if stock.change_pct > 0 else 'bg-danger' }}">
+                                        {{ stock.change_pct }}%
+                                    </span>
+                                </td>
+                                <td>{{ stock.pe_ratio }}</td>
+                                <td>{{ stock.beta }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function analyzeStock() {
+    const ticker = document.getElementById('tickerInput').value.trim();
+    if (!ticker) return;
+    
+    showLoading(); // Triggers the overlay animation
+
+    try {
+        const response = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ ticker: ticker })
+        });
+        const data = await response.json();
+        if (data.error) {
+            alert(data.error);
+            document.getElementById('loadingOverlay').classList.add('d-none');
+            document.getElementById('loadingOverlay').classList.remove('d-flex');
+        } else {
+            window.location.href = "/insight_summary";
+        }
+    } catch (e) {
+        alert("Connection error");
+        location.reload(); 
+    }
+}
+</script>
+{% endblock %}

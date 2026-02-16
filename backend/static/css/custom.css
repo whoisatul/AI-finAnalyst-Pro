@@ -1,0 +1,151 @@
+:root {
+    --primary-color: #0f172a;
+    --accent-color: #3b82f6;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc;
+    color: #334155;
+}
+
+h1, h2, h3, h4, h5, .navbar-brand {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Navbar Gradient */
+.bg-dark-gradient {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.text-accent { color: var(--accent-color); }
+.tracking-tight { letter-spacing: -0.025em; }
+
+/* Cards & Glassmorphism */
+.card-glass {
+    background: var(--glass-bg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-glass:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* AI Analysis Text Formatting */
+.analysis-content h3 { font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; color: #1e293b; }
+.analysis-content p { line-height: 1.7; color: #475569; }
+.analysis-content li { margin-bottom: 0.5rem; }
+
+/* Custom Badge Pulse Animation */
+.badge-pulse {
+    position: relative;
+}
+.badge-pulse::after {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    opacity: 0;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Loading Overlay */
+#loadingOverlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.9);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+:root {
+    /* Day Mode Variables */
+    --bg-color: #f0f2f5;
+    --text-color: #1e293b;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(255, 255, 255, 0.5);
+    --accent-color: #2563eb; /* Blue */
+    --accent-glow: rgba(37, 99, 235, 0.3);
+    --navbar-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    /* Night Mode Variables (Cyberpunk) */
+    --bg-color: #0f172a;
+    --text-color: #e2e8f0;
+    --card-bg: rgba(30, 41, 59, 0.7); /* Darker glass */
+    --card-border: rgba(255, 255, 255, 0.1);
+    --accent-color: #38bdf8; /* Cyan */
+    --accent-glow: rgba(56, 189, 248, 0.4);
+    --navbar-bg: rgba(15, 23, 42, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Glassmorphism Cards */
+.card-glass {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-glass:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px 0 var(--accent-glow);
+    border-color: var(--accent-color);
+}
+
+/* Glowing Buttons */
+.btn-glow {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    box-shadow: 0 0 15px var(--accent-glow);
+    transition: all 0.3s ease;
+}
+
+.btn-glow:hover {
+    background-color: var(--accent-color);
+    box-shadow: 0 0 25px var(--accent-glow), 0 0 50px var(--accent-glow);
+    transform: scale(1.05);
+}
+
+/* Navbar Updates */
+.navbar {
+    background: var(--navbar-bg) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--card-border);
+}
+
+/* Table Text Colors */
+[data-theme="dark"] .table {
+    color: var(--text-color);
+}
+[data-theme="dark"] .text-muted {
+    color: #94a3b8 !important;
+}

@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center" data-aos="fade-down">
+    <div class="col-lg-8 text-center mb-5">
+        <h2 class="fw-bold">Research History</h2>
+        <p class="text-muted">A timeline of your AI-generated financial insights.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="timeline-container">
+            {% for item in items %}
+            <div class="card card-glass border-0 mb-4" data-aos="fade-up">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <span class="fw-bold text-primary">{{ item.ticker }}</span>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">Analysis for {{ item.ticker }}</h5>
+                                <small class="text-muted"><i class="fa-regular fa-clock me-1"></i> {{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">AI Generated</span>
+                    </div>
+                    
+                    <div class="bg-light rounded p-3 text-muted" style="max-height: 100px; overflow: hidden; position: relative;">
+                        {{ item.analysis[:250] }}...
+                        <div class="position-absolute bottom-0 start-0 w-100" style="height: 40px; background: linear-gradient(to top, #f8f9fa, transparent);"></div>
+                    </div>
+                    
+                    <div class="mt-3 text-end">
+                         <button class="btn btn-sm btn-link text-decoration-none fw-bold" disabled>
+                            Full Report Archived <i class="fa-solid fa-check ms-1"></i>
+                         </button>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa-solid fa-clock-rotate-left fa-3x mb-3 opacity-25"></i>
+                <p>No analysis history found.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
