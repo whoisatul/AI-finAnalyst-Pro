@@ -49,7 +49,7 @@ export default function Home() {
               value={ticker}
               onChange={(e) => setTicker(e.target.value.toUpperCase())}
               onKeyDown={(e) => e.key === 'Enter' && analyzeStock()}
-              placeholder="Search Ticker (e.g. AAPL, TSLA)..."
+              placeholder="Search Ticker (e.g. APPLE, TESLA, etc.)..."
               className="flex-1 bg-transparent px-6 py-4 text-lg focus:outline-none placeholder:text-gray-500"
             />
             <button 

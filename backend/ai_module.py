@@ -1,7 +1,6 @@
 import os
 import traceback
 from typing import Dict
-import dspy
 from dotenv import load_dotenv
 
 load_dotenv()
