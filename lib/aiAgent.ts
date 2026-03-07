@@ -114,7 +114,7 @@ INSTRUCTIONS:
 
     try {
         const response = await agent.llm!.chatCompletion({
-            model: "meta-llama/Llama-3.2-8B-Instruct",
+            model: "Qwen/Qwen2.5-7B-Instruct",
             messages: [
                 { role: "system", content: systemContent },
                 { role: "user", content: userContent }
