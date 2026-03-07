@@ -1,0 +1,2 @@
+SUCCESS: Qwen/Qwen2.5-7B-Instruct
+SUCCESS: meta-llama/Llama-3.2-1B-Instruct
