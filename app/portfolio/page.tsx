@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import Link from "next/link";
 
 interface Holding {
   id: number;
@@ -13,8 +12,18 @@ interface Holding {
   value: number;
 }
 
-// Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const CHART_COLORS = [
+  "#3b82f6",
+  "#34d399",
+  "#f59e0b",
+  "#f87171",
+  "#a855f7",
+  "#ec4899",
+  "#06b6d4",
+  "#84cc16",
+];
 
 export default function Portfolio() {
   const [holdings, setHoldings] = useState<Holding[]>([]);
@@ -23,31 +32,23 @@ export default function Portfolio() {
   const [newQty, setNewQty] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const refreshPortfolio = async () => {
+    try {
+      const res = await fetch("/api/portfolio");
+      const data = await res.json();
+      setHoldings(data.holdings);
+      setTotalValue(data.total_value);
+    } catch (error) {
+      console.error("Failed to load portfolio", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    let mounted = true;
-
-    const loadPortfolio = async () => {
-      try {
-        const res = await fetch("/api/portfolio");
-        const data = await res.json();
-        if (mounted) {
-          setHoldings(data.holdings);
-          setTotalValue(data.total_value);
-          setLoading(false);
-        }
-      } catch (error) {
-        if (mounted) {
-          console.error("Failed to load portfolio", error);
-          setLoading(false);
-        }
-      }
-    };
-
-    loadPortfolio();
-    return () => { mounted = false; };
+    refreshPortfolio();
   }, []);
 
-  // Add Stock
   const handleAdd = async () => {
     if (!newTicker || !newQty) return;
     await fetch("/api/portfolio/add", {
@@ -57,109 +58,159 @@ export default function Portfolio() {
     });
     setNewTicker("");
     setNewQty("");
-    window.location.reload(); // Simple refresh to get new data
+    await refreshPortfolio();
   };
 
-  // Delete Stock
   const handleDelete = async (ticker: string) => {
-    if (!confirm(`Remove ${ticker}?`)) return;
+    if (!confirm(`Remove ${ticker} from portfolio?`)) return;
     await fetch("/api/portfolio/delete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ticker }),
     });
-    window.location.reload();
+    await refreshPortfolio();
   };
 
-  // Chart Data Configuration
   const chartData = {
     labels: holdings.map((h) => h.ticker),
     datasets: [
       {
         data: holdings.map((h) => h.value),
-        backgroundColor: [
-          "#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899"
-        ],
+        backgroundColor: CHART_COLORS,
         borderWidth: 0,
+        hoverBorderWidth: 2,
+        hoverBorderColor: "#fff",
       },
     ],
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8">
-      {/* Navigation (Simple) */}
-      <div className="max-w-6xl mx-auto mb-8 flex justify-between items-center">
-        <h1 className="text-3xl font-bold">My Portfolio</h1>
-        <Link href="/" className="text-blue-400 hover:text-blue-300">← Back to Dashboard</Link>
-      </div>
+    <div className="min-h-screen px-4 sm:px-6 pb-16">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-6xl mx-auto pt-8 sm:pt-12 mb-8"
+      >
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="badge">💼 Portfolio</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold gradient-text">
+              My Portfolio
+            </h1>
+            <p className="text-[var(--text-secondary)] text-sm mt-1.5">
+              Track and manage your stock holdings
+            </p>
+          </div>
+          <a
+            href="/api/portfolio/report"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary text-sm flex items-center gap-2"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            Download PDF
+          </a>
+        </div>
+      </motion.div>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-        {/* Left: Add Stock & Table */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="lg:col-span-2 space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="lg:col-span-2 space-y-5"
         >
-          {/* Add Stock Card */}
-          <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-md">
-            <h3 className="text-xl font-bold mb-4">Add Position</h3>
-            <div className="flex gap-4">
+          {/* Add Position */}
+          <div className="glass-card p-5 sm:p-6">
+            <h3 className="text-base font-semibold mb-4 flex items-center gap-2 text-[var(--text-secondary)]">
+              <span className="text-lg">+</span> Add Position
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-3">
               <input
                 value={newTicker}
                 onChange={(e) => setNewTicker(e.target.value.toUpperCase())}
-                placeholder="Ticker (e.g. MSFT)"
-                className="flex-1 bg-black/20 border border-white/20 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500"
+                placeholder="Ticker (e.g. AAPL)"
+                className="premium-input flex-1"
               />
               <input
                 type="number"
                 value={newQty}
                 onChange={(e) => setNewQty(e.target.value)}
-                placeholder="Qty"
-                className="w-24 bg-black/20 border border-white/20 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500"
+                placeholder="Quantity"
+                className="premium-input w-full sm:w-28"
               />
               <button
                 onClick={handleAdd}
-                className="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold transition-colors"
+                disabled={!newTicker || !newQty}
+                className="btn-primary text-sm whitespace-nowrap"
               >
-                Add
+                Add Stock
               </button>
             </div>
           </div>
 
           {/* Holdings Table */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
-            <table className="w-full text-left">
-              <thead className="bg-black/20 text-gray-400 uppercase text-sm">
+          <div className="glass-card overflow-hidden">
+            <table className="premium-table">
+              <thead>
                 <tr>
-                  <th className="p-4">Ticker</th>
-                  <th className="p-4">Qty</th>
-                  <th className="p-4">Price</th>
-                  <th className="p-4">Value</th>
-                  <th className="p-4 text-right">Action</th>
+                  <th>Ticker</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Value</th>
+                  <th className="text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody>
                 {holdings.map((h) => (
-                  <tr key={h.id} className="hover:bg-white/5 transition-colors">
-                    <td className="p-4 font-bold text-blue-400">{h.ticker}</td>
-                    <td className="p-4">{h.quantity}</td>
-                    <td className="p-4">${h.price}</td>
-                    <td className="p-4 font-bold text-green-400">${h.value.toLocaleString()}</td>
-                    <td className="p-4 text-right">
+                  <tr key={h.id}>
+                    <td>
+                      <span className="font-bold text-cyan-400">{h.ticker}</span>
+                    </td>
+                    <td className="tabular-nums text-[var(--text-secondary)]">
+                      {h.quantity}
+                    </td>
+                    <td className="tabular-nums text-[var(--text-secondary)]">
+                      ${h.price}
+                    </td>
+                    <td className="font-semibold text-emerald-400 tabular-nums">
+                      ${h.value.toLocaleString()}
+                    </td>
+                    <td className="text-right">
                       <button
                         onClick={() => handleDelete(h.ticker)}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-400/10 px-3 py-1 rounded"
+                        className="text-xs text-red-400/70 hover:text-red-400 hover:bg-red-400/10 px-3 py-1.5 rounded-lg transition-all"
                       >
-                        Delete
+                        Remove
                       </button>
                     </td>
                   </tr>
                 ))}
                 {holdings.length === 0 && !loading && (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-gray-500">
-                      No stocks yet. Add one above!
+                    <td colSpan={5} className="!py-12 text-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <span className="text-3xl">📭</span>
+                        <p className="text-[var(--text-muted)]">
+                          No holdings yet. Add your first position above!
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -168,40 +219,81 @@ export default function Portfolio() {
           </div>
         </motion.div>
 
-        {/* Right: Charts & Summary */}
+        {/* Right Column */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-5"
         >
-          <div className="bg-gradient-to-br from-blue-600 to-cyan-500 p-6 rounded-2xl shadow-lg">
-            <p className="text-blue-100 text-sm font-medium mb-1">Total Portfolio Value</p>
-            <h2 className="text-4xl font-bold">${totalValue.toLocaleString()}</h2>
+          {/* Total Value Card */}
+          <div className="relative overflow-hidden rounded-2xl p-6">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-cyan-500/90" />
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%220%200%2040%2040%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22%23fff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50" />
+            <div className="relative z-10">
+              <p className="text-blue-100 text-xs font-semibold uppercase tracking-wider mb-1">
+                Total Portfolio Value
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-bold tabular-nums">
+                ${totalValue.toLocaleString()}
+              </h2>
+              <p className="text-blue-200/60 text-xs mt-2">
+                {holdings.length} position{holdings.length !== 1 ? "s" : ""} tracked
+              </p>
+            </div>
           </div>
 
-          <div className="bg-white/5 border border-white/10 p-6 rounded-2xl backdrop-blur-md flex flex-col items-center">
-            <h3 className="text-xl font-bold mb-6 self-start">Asset Allocation</h3>
-            <div className="w-64 h-64">
+          {/* Doughnut Chart */}
+          <div className="glass-card p-5 sm:p-6 flex flex-col items-center">
+            <h3 className="text-sm font-semibold text-[var(--text-secondary)] mb-5 self-start uppercase tracking-wider">
+              Asset Allocation
+            </h3>
+            <div className="w-52 h-52 sm:w-56 sm:h-56">
               {holdings.length > 0 ? (
-                <Doughnut data={chartData} options={{ cutout: '70%', plugins: { legend: { display: false } } }} />
+                <Doughnut
+                  data={chartData}
+                  options={{
+                    cutout: "72%",
+                    plugins: { legend: { display: false } },
+                    responsive: true,
+                    maintainAspectRatio: true,
+                  }}
+                />
               ) : (
-                <div className="h-full flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-700 rounded-full">
+                <div className="h-full flex items-center justify-center text-[var(--text-muted)] border-2 border-dashed border-white/10 rounded-full text-sm">
                   No Data
                 </div>
               )}
             </div>
-            {/* Custom Legend */}
-            <div className="grid grid-cols-2 gap-2 mt-6 w-full">
-              {holdings.map((h, i) => (
-                <div key={h.ticker} className="flex items-center gap-2 text-sm">
-                  <span className="w-3 h-3 rounded-full" style={{ backgroundColor: chartData.datasets[0].backgroundColor[i % 6] }}></span>
-                  <span className="text-gray-300">{h.ticker}</span>
-                </div>
-              ))}
-            </div>
+            {holdings.length > 0 && (
+              <div className="grid grid-cols-2 gap-x-6 gap-y-2 mt-5 w-full">
+                {holdings.map((h, i) => (
+                  <div
+                    key={h.ticker}
+                    className="flex items-center gap-2 text-xs"
+                  >
+                    <span
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{
+                        backgroundColor:
+                          CHART_COLORS[i % CHART_COLORS.length],
+                      }}
+                    />
+                    <span className="text-[var(--text-secondary)] truncate">
+                      {h.ticker}
+                    </span>
+                    <span className="ml-auto text-[var(--text-muted)] tabular-nums">
+                      {totalValue > 0
+                        ? Math.round((h.value / totalValue) * 100)
+                        : 0}
+                      %
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </motion.div>
-
       </div>
     </div>
   );

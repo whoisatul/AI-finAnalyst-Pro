@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 
 interface HistoryItem {
   id: number;
@@ -13,6 +12,7 @@ interface HistoryItem {
 export default function HistoryPage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/history")
@@ -24,73 +24,142 @@ export default function HistoryPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white p-8">
+    <div className="min-h-screen px-4 sm:px-6 pb-16">
       {/* Header */}
-      <div className="max-w-4xl mx-auto mb-12 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-            Analysis Timeline
-          </h1>
-          <p className="text-gray-400 mt-2">Past 20 AI research reports</p>
-        </div>
-        <Link href="/" className="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-sm">
-          ← Back to Dashboard
-        </Link>
-      </div>
-
-      {/* Timeline Container */}
-      <div className="max-w-3xl mx-auto space-y-8 relative">
-        {/* Vertical Line */}
-        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500/50 to-transparent"></div>
-
-        {history.map((item, index) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="relative pl-12"
-          >
-            {/* Timeline Dot */}
-            <div className="absolute left-0 top-6 w-8 h-8 bg-slate-900 border-2 border-purple-500 rounded-full flex items-center justify-center z-10">
-              <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto pt-8 sm:pt-12 mb-10"
+      >
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="badge">📜 History</span>
             </div>
+            <h1 className="text-3xl sm:text-4xl font-bold">
+              <span className="gradient-text-accent">Analysis Timeline</span>
+            </h1>
+            <p className="text-[var(--text-secondary)] text-sm mt-1.5">
+              Your last 20 AI-generated research reports
+            </p>
+          </div>
+          <div className="text-xs text-[var(--text-muted)] tabular-nums">
+            {history.length} report{history.length !== 1 ? "s" : ""}
+          </div>
+        </div>
+      </motion.div>
 
-            {/* Card */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:border-purple-500/30 transition-all group">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <span className="text-2xl font-bold text-white group-hover:text-purple-400 transition-colors">
-                    {item.ticker}
-                  </span>
-                  <span className="ml-3 text-xs text-gray-500 font-mono border border-white/10 px-2 py-1 rounded">
-                    AI REPORT
-                  </span>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-400">{item.date.split(' ')[0]}</p>
-                  <p className="text-xs text-gray-600">{item.date.split(' ')[1]}</p>
-                </div>
+      {/* Timeline */}
+      <div className="max-w-3xl mx-auto relative">
+        {/* Vertical Line */}
+        <div className="absolute left-[15px] sm:left-[19px] top-2 bottom-0 w-px bg-gradient-to-b from-purple-500/40 via-blue-500/20 to-transparent" />
+
+        <div className="space-y-6">
+          {history.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: Math.min(index * 0.05, 0.5) }}
+              className="relative pl-10 sm:pl-14"
+            >
+              {/* Timeline Dot */}
+              <div className="absolute left-0 sm:left-1 top-5 w-[30px] h-[30px] sm:w-[38px] sm:h-[38px] rounded-full border-2 border-purple-500/40 bg-[var(--bg-primary)] flex items-center justify-center z-10">
+                <div className="w-2 h-2 bg-purple-400 rounded-full" />
               </div>
 
-              <div className="prose prose-invert prose-sm max-w-none">
-                <div className="line-clamp-3 text-gray-300 leading-relaxed">
+              {/* Card */}
+              <div
+                className="glass-card p-5 sm:p-6 cursor-pointer group"
+                onClick={() =>
+                  setExpandedId(expandedId === item.id ? null : item.id)
+                }
+              >
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl sm:text-2xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                      {item.ticker}
+                    </span>
+                    <span className="badge">AI Report</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] tabular-nums">
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    {item.date}
+                  </div>
+                </div>
+
+                <div
+                  className={`text-sm text-[var(--text-secondary)] leading-relaxed whitespace-pre-line transition-all duration-300 ${expandedId === item.id ? "" : "line-clamp-3"
+                    }`}
+                >
                   {item.analysis}
                 </div>
-              </div>
 
-              <div className="mt-4 pt-4 border-t border-white/5 flex justify-end">
-                <button className="text-xs text-purple-400 hover:text-purple-300 font-medium flex items-center gap-1">
-                  Full Report Archived <span className="text-xs">🔒</span>
-                </button>
+                <div className="mt-4 pt-3 border-t border-[var(--border-subtle)] flex justify-end">
+                  <span className="text-xs text-purple-400/70 group-hover:text-purple-400 transition-colors flex items-center gap-1">
+                    {expandedId === item.id ? "Collapse" : "Read More"}
+                    <svg
+                      className={`w-3 h-3 transition-transform duration-200 ${expandedId === item.id ? "rotate-180" : ""
+                        }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </span>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
 
+        {/* Empty State */}
         {!loading && history.length === 0 && (
-          <div className="text-center py-20 text-gray-500">
-            No history found. Go analyze some stocks!
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-24"
+          >
+            <div className="text-5xl mb-4">🔍</div>
+            <p className="text-[var(--text-muted)] text-lg">
+              No analysis history yet
+            </p>
+            <p className="text-[var(--text-muted)] text-sm mt-1">
+              Go to the Dashboard and analyze your first stock!
+            </p>
+          </motion.div>
+        )}
+
+        {/* Loading */}
+        {loading && (
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="pl-14">
+                <div className="glass-card p-6 space-y-3">
+                  <div className="skeleton h-7 w-24" />
+                  <div className="skeleton h-4 w-full" />
+                  <div className="skeleton h-4 w-3/4" />
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

@@ -14,8 +14,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "AI-finAnalyst Pro",
-  description: "fin-analyst-ai Pro is AI-powered financial analyst which is create by hrikshesh kumar to help you to analyze the stock market and make the decision to invest in the stock market, it uses custom models to analyze the stock in last few years and give you the best analysis.",
+  title: "FinAnalyst Pro — AI-Powered Stock Analysis",
+  description:
+    "FinAnalyst Pro is an AI-powered financial analyst that helps you analyze the stock market with custom AI models, delivering institutional-grade insights in seconds.",
 };
 
 export default function RootLayout({
@@ -25,13 +26,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${spaceGrotesk.variable} antialiased bg-slate-900 text-white`}>
-        <Navbar /> {/* <--- Add it here, above children */}
-        
-        {/* We add padding-top (pt-20) so the content isn't hidden behind the fixed navbar */}
-        <main className="pt-20">
-          {children}
-        </main>
+      <body
+        className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
+      >
+        {/* Ambient background mesh */}
+        <div className="bg-mesh" />
+
+        <Navbar />
+
+        <main className="relative z-10 pt-20">{children}</main>
       </body>
     </html>
   );
