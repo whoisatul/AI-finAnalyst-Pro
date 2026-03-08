@@ -106,11 +106,14 @@ FINANCIAL DATA:
 - Beta: ${stockData.beta}
 
 INSTRUCTIONS:
-1. Start with an "Executive Summary" (Buy/Hold/Sell).
+1. Start with an "Executive Summary" (Buy/Hold/Sell recommendation).
 2. Analyze "Market Sentiment" based on the provided news.
 3. Evaluate "Fundamentals" based on the P/E and Beta.
 4. Mention specific news events if relevant.
-5. Do NOT use placeholders like "[Insert Date]". Use the date provided above.`;
+5. End with a "Conclusion" and actionable "Recommendations".
+6. Do NOT include any placeholders like "[Your Name]", "[Your Firm]", "[Insert Date]", "Prepared by", or contact info. This is a system-generated report.
+7. Use the exact date provided above. Do NOT make up dates.
+8. Keep the report concise and professional. Use markdown formatting.`;
 
     try {
         const response = await agent.llm!.chatCompletion({
@@ -140,9 +143,9 @@ async function riskManagerNode(state: AgentStateType): Promise<Partial<AgentStat
 
     if (typeof beta === "number") {
         if (beta > 1.5) {
-            warning = "\n\n⚠️ RISK NOTICE: High Volatility (Beta > 1.5). Limit position size.";
+            warning = "\n\n---\n\n**RISK NOTICE:** High Volatility (Beta > 1.5). Consider limiting position size and implementing stop-loss orders.";
         } else if (beta < 0.8) {
-            warning = "\n\nℹ️ DEFENSIVE PLAY: Low Volatility (Beta < 0.8). Good for stability.";
+            warning = "\n\n---\n\n**DEFENSIVE PLAY:** Low Volatility (Beta < 0.8). Suitable for conservative portfolios seeking stability.";
         }
     }
 

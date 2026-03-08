@@ -45,7 +45,7 @@ export default function Navbar() {
             <div className="relative w-9 h-9">
               <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-xl group-hover:rotate-12 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-cyan-500/25" />
               <div className="absolute inset-[2px] bg-[var(--bg-primary)] rounded-[10px] flex items-center justify-center">
-                <span className="text-xs font-bold gradient-text-accent">F</span>
+                <span className="text-s font-bold gradient-text-accent">F</span>
               </div>
             </div>
             <span className="text-lg font-bold tracking-tight gradient-text hidden sm:block">
