@@ -117,7 +117,7 @@ INSTRUCTIONS:
 
     try {
         const response = await agent.llm!.chatCompletion({
-            model: "Qwen/Qwen2.5-7B-Instruct",
+            model: "deepseek-ai/DeepSeek-R1",
             messages: [
                 { role: "system", content: systemContent },
                 { role: "user", content: userContent }
