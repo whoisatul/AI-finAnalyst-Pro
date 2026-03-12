@@ -5,6 +5,9 @@ The concept of financial analysis can be overwhelming for retail investors due t
 
 ## 🔍 Overview
 This project implements an **AI-driven Financial Analyst and Portfolio Dashboard**. The platform takes a stock ticker, fetches real-time market data, and uses an advanced AI pipeline to act as a virtual financial advisor, providing comprehensive analysis, risk assessment, and sentiment evaluation.
+<div align="center">
+    <img src="/public/ai-finanalyst-system-design.svg" alt="Logo" width="800" height="800">
+</div>
 
 LangGraph and Hugging Face are well-suited for this problem as they allow us to build **multi-step, cognitive agent workflows** that can process numbers, scrape recent news, and generate structured, human-readable financial reports.
 
@@ -20,7 +23,7 @@ Given a stock ticker, provide a user with **real-time market data, aggregated ne
 - **Tailwind CSS v4 & Framer Motion** – UI styling and animations
 - **Prisma & PostgreSQL** – Database ORM for tracking portfolios and analysis history
 - **LangChain & LangGraph** – Multi-agent AI orchestration
-- **Hugging Face Serverless Inference** – Open-source LLM processing (model: "Qwen/Qwen2.5-7B-Instruct")
+- **Hugging Face Serverless Inference** – Open-source LLM processing (model: "deepseek-ai/DeepSeek-R1")
 - **Yahoo Finance API (`yahoo-finance2`)** – Real-time market and historical data
 - **Duck-Duck-Scrape** – Live news and web scraping
 - **Chart.js** – Interactive financial data visualization
