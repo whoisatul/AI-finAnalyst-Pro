@@ -5,11 +5,10 @@ The concept of financial analysis can be overwhelming for retail investors due t
 
 ## 🔍 Overview
 This project implements an **AI-driven Financial Analyst and Portfolio Dashboard**. The platform takes a stock ticker, fetches real-time market data, and uses an advanced AI pipeline to act as a virtual financial advisor, providing comprehensive analysis, risk assessment, and sentiment evaluation.
+LangGraph and Hugging Face are well-suited for this problem as they allow us to build **multi-step, cognitive agent workflows** that can process numbers, scrape recent news, and generate structured, human-readable financial reports.
 <div align="center">
     <img src="/public/ai-finanalyst_system_design.svg" alt="Logo" width="800" height="800">
 </div>
-
-LangGraph and Hugging Face are well-suited for this problem as they allow us to build **multi-step, cognitive agent workflows** that can process numbers, scrape recent news, and generate structured, human-readable financial reports.
 
 ---
 
