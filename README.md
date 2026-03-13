@@ -73,3 +73,4 @@ Unlike generic AI chatbots that hallucinate financial data, AI-FinAnalyst-Pro us
 ---
 
 ⭐ If you find this project useful, consider starring the repository!
+Developed by **Hrikshesh Kumar** at **IIIT Vadodara** **
