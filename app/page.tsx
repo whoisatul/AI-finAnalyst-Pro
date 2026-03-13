@@ -61,7 +61,7 @@ export default function Home() {
         </motion.div>
 
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1]">
+        <h1 className="z-10 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1]">
           <span className="gradient-text">Financial Intelligence,</span>
           <br />
           <span className="gradient-text-accent">Simplified.</span>
@@ -73,7 +73,7 @@ export default function Home() {
         </p>
 
         {/* Search Bar — Clean, minimal style */}
-        <div className="max-w-2xl mx-auto pt-2">
+        <div className="z-10 max-w-2xl mx-auto pt-2">
           <div className="flex items-center bg-[var(--bg-secondary)] rounded-xl border border-[var(--border-subtle)] focus-within:border-[var(--accent-blue)]/40 transition-colors">
             <div className="pl-4 text-[var(--text-muted)]">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
