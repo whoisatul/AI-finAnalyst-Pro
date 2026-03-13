@@ -1,7 +1,7 @@
 <h1 align='center'>AI-FinAnalyst-Pro</h1> 
 
 The concept of financial analysis can be overwhelming for retail investors due to the sheer volume of data, news, and complex metrics. In my opinion, making informed investment decisions requires a blend of quantitative data and qualitative insights. In this repo, I will take you through how to create a highly intelligent, agent-based financial analyst using LangGraph and Hugging Face, integrated seamlessly into a modern Next.js application.
-<h3>Deployed link - </h3>
+<h3>Deployed link - https://ai-fin-analyst-pro.vercel.app</h3>
 
 ## 🔍 Overview
 This project implements an **AI-driven Financial Analyst and Portfolio Dashboard**. The platform takes a stock ticker, fetches real-time market data, and uses an advanced AI pipeline to act as a virtual financial advisor, providing comprehensive analysis, risk assessment, and sentiment evaluation.
